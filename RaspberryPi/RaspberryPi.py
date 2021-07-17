@@ -26,17 +26,21 @@ class sensing():
 # 날씨정보, KNN, visualize
 class classification_model():
     def __init__(self):
-        pass
+        self.data = None
+        self.reference = None
+        self.weight = None
+        self.reference_pos = None
+        self.reference_neg = None
+        self.result = None
 
     def get_dust_info(self):
         html = requests.get('https://search.naver.com/search.naver?query=날씨')
         soup = bs(html.text,'html.parser')
 
-        data1 = soup.find('div',{'class':'detail_box'})
-        data2 = data1.findAll('dd')
+        dust_data = soup.find('div',{'class':'detail_box'}).findAll('dd')
 
-        fine_dust = data2[0].find('span',{'class':'num'}).text.split('㎍')[0]
-        ultra_fine_dust = data2[1].find('span',{'class':'num'}).text.split('㎍')[0]
+        fine_dust = dust_data[0].find('span',{'class':'num'}).text.split('㎍')[0]
+        ultra_fine_dust = dust_data[1].find('span',{'class':'num'}).text.split('㎍')[0]
 
         return int(fine_dust), int(ultra_fine_dust)
 
@@ -71,8 +75,11 @@ class classification_model():
         distance_neg_cnt = (distance_argsort >= self.reference_pos.shape[1]).sum(axis=-1)
         self.result = np.where(distance_neg_cnt > (K-1)/2, 1, 0) # integer K has to be an odd number and smaller than number of references
 
+        return self.result
+
     def visualize(self, n_feature=2):
         plt.style.use('seaborn')
+
         if n_feature == 2:
             self.data = self.data.squeeze()
             self.reference_pos = self.reference_pos.squeeze()
@@ -86,11 +93,18 @@ class classification_model():
             ax.scatter(self.reference_neg[..., 0], self.reference_neg[..., 1], color=cmap(1), alpha=0.3)
             for data_idx, data in enumerate(self.data):
                 ax.scatter(data[0], data[1], color=cmap(self.result[data_idx]), marker='*')
+
+            ax.set_xlabel("Riboflavin", fontsize=15)
+            ax.set_ylabel("Dust", fontsize=15)
             
+            # for legend
             ax.scatter([], [], color=cmap(0), label='positive')
             ax.scatter([], [], color=cmap(1), label='negative')
             ax.scatter([], [], color='k', marker='*', label='data')
             ax.scatter([], [], color='k', marker='o', label='reference')
+
+        elif n_feature == 3:
+            pass
 
         ax.legend(loc='upper left',
                   bbox_to_anchor=(1, 1),
@@ -101,8 +115,12 @@ class classification_model():
 if __name__ == "__main__":
     reference_pos = np.random.randint(low=0, high=10, size=(20, 2))
     reference_neg = np.random.randint(low=20, high=30, size=(20, 2))
-    data = np.random.randint(low=-10, high=40, size=(40, 2))
+    data = np.random.randint(low=0, high=30, size=(100, 2))
 
     model = classification_model()
-    arr = model.weighted_KNN(5, data=data, reference=[reference_pos, reference_neg], weight=np.array([1, 4]))
+    model.weighted_KNN(K=5, 
+                       data=data, 
+                       reference=[reference_pos, reference_neg], 
+                       weight=np.array([3, 1]))
     model.visualize()
+    print(model.get_dust_info())
