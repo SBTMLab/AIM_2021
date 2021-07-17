@@ -98,10 +98,11 @@ class classification_model():
         fig.tight_layout()
         plt.show()
 
-reference_pos = np.random.randint(low=0, high=10, size=(20, 2))
-reference_neg = np.random.randint(low=20, high=30, size=(20, 2))
-data = np.random.randint(low=-10, high=40, size=(40, 2))
+if __name__ == "__main__":
+    reference_pos = np.random.randint(low=0, high=10, size=(20, 2))
+    reference_neg = np.random.randint(low=20, high=30, size=(20, 2))
+    data = np.random.randint(low=-10, high=40, size=(40, 2))
 
-model = classification_model()
-arr = model.weighted_KNN(5, data=data, reference=[reference_pos, reference_neg], weight=np.array([1, 4]))
-model.visualize()
+    model = classification_model()
+    arr = model.weighted_KNN(5, data=data, reference=[reference_pos, reference_neg], weight=np.array([1, 4]))
+    model.visualize()
