@@ -13,6 +13,7 @@ import time
 import cv2
 import os
 
+# must check directory!!
 PATH_TO_APPEND = 'Face-Mask-Detection-master/'
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
