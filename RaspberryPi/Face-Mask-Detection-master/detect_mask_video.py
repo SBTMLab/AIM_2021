@@ -138,6 +138,8 @@ while True:
 		cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 
 		########## add warning code ##########
+		if label == "No Mask":
+			pass
 
 	# show the output frame
 	cv2.imshow("Frame", frame)

@@ -32,6 +32,8 @@ class classification_model():
         self.reference_pos = None
         self.reference_neg = None
         self.result = None
+        self.fine_dust = None
+        self.ultra_fine_dust = None
 
     def get_dust_info(self):
         html = requests.get('https://search.naver.com/search.naver?query=날씨')
@@ -39,10 +41,10 @@ class classification_model():
 
         dust_data = soup.find('div',{'class':'detail_box'}).findAll('dd')
 
-        fine_dust = dust_data[0].find('span',{'class':'num'}).text.split('㎍')[0]
-        ultra_fine_dust = dust_data[1].find('span',{'class':'num'}).text.split('㎍')[0]
+        self.fine_dust = dust_data[0].find('span',{'class':'num'}).text.split('㎍')[0]
+        self.ultra_fine_dust = dust_data[1].find('span',{'class':'num'}).text.split('㎍')[0]
 
-        return int(fine_dust), int(ultra_fine_dust)
+        return int(self.fine_dust), int(self.ultra_fine_dust)
 
     def weighted_KNN(self, K: int, data: np.array, reference: list, weight: np.array):
         self.data = data # shape: (n_data, n_feature)
@@ -121,6 +123,6 @@ if __name__ == "__main__":
     model.weighted_KNN(K=5, 
                        data=data, 
                        reference=[reference_pos, reference_neg], 
-                       weight=np.array([3, 1]))
+                       weight=np.array([1, 3]))
     model.visualize()
     print(model.get_dust_info())
