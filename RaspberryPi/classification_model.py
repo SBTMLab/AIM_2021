@@ -1,27 +1,8 @@
 from bs4 import BeautifulSoup as bs
 import requests
-# import RPi.GPIO as GPIO
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-
-# 형광분석법, 먼지측정
-class sensing():
-    def __init__(self, led_pin=18):
-        self.led_pin = led_pin
-
-    '''def turn_LED_on(self, sec, brightness, freq=1000.0):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.led_pin, GPIO.OUT)
-
-        pwm = GPIO.PWM(self.led_pin, freq)
-        pwm.start(brightness) # 0.0~100.0
-        
-        time.sleep(sec)
-
-        pwm.stop()
-        GPIO.cleanup()'''
 
 # 날씨정보, KNN, visualize
 class classification_model():
@@ -45,6 +26,9 @@ class classification_model():
         self.ultra_fine_dust = dust_data[1].find('span',{'class':'num'}).text.split('㎍')[0]
 
         return int(self.fine_dust), int(self.ultra_fine_dust)
+
+    def read_spectroscope(self, file_directory):
+        pass
 
     def weighted_KNN(self, K: int, data: np.array, reference: list, weight: np.array):
         self.data = data # shape: (n_data, n_feature)
