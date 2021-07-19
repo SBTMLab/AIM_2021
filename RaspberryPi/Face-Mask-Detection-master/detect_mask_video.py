@@ -13,7 +13,12 @@ import time
 import cv2
 import os
 
-# must check directory!!
+# import packages for warning audio
+import pyaudio
+import wave
+
+CHUNK = 512
+AUDIO_PATH = 'audio/mask_warning.wav'
 PATH_TO_APPEND = 'Face-Mask-Detection-master/'
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
@@ -139,7 +144,20 @@ while True:
 
 		########## add warning code ##########
 		if label == "No Mask":
-			pass
+			wf = wave.open(AUDIO_PATH, 'rb')
+			p = pyaudio.PyAudio()
+			stream = p.open(format =p.get_format_from_width(wf.getsampwidth()),
+                			channels =wf.getnchannels(),
+                			rate =wf.getframerate(),
+                			output =True)
+			data = wf.readframes(CHUNK)
+			while data:
+				stream.write(data)
+				data = wf.readframes(CHUNK)
+			stream.stop_stream()
+			stream.close()
+			wf.close()
+			p.terminate()
 
 	# show the output frame
 	cv2.imshow("Frame", frame)
