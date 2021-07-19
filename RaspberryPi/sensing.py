@@ -3,10 +3,11 @@ import spidev
 import time
 import numpy as np
 
-# 형광분석법, 먼지측정
+# 형광분석법, 마스크먼지 측정
 class sensing():
-    def __init__(self, led_pin=18, light_channel=1):
-        self.led_pin = led_pin
+    def __init__(self, ultraviolet_pin:int, visible_pin:int, light_channel=1):
+        self.ultraviolet_pin = ultraviolet_pin
+        self.visible_pin = visible_pin
         self.light_channel = light_channel
 
         self.spi = spidev.SpiDev()
@@ -16,11 +17,16 @@ class sensing():
         self.dust_before = 0
         self.dust_after = 0
 
-    def turn_LED_on(self, sec, brightness, freq=1000.0):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.led_pin, GPIO.OUT)
+    def turn_LED_on(self, sec, brightness, visible=False, freq=1000.0):
+        if visible==True:
+            LED_pin = self.visible_pin
+        else:
+            LED_pin = self.ultraviolet_pin
 
-        pwm = GPIO.PWM(self.led_pin, freq)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(LED_pin, GPIO.OUT)
+
+        pwm = GPIO.PWM(LED_pin, freq)
         pwm.start(brightness) # 0.0~100.0
         
         time.sleep(sec)
