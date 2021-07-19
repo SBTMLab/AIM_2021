@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-# 날씨정보, KNN, visualize
+# dust info, KNN, visualize
 class classification_model():
     def __init__(self):
         self.data = None
@@ -63,15 +63,18 @@ class classification_model():
 
         return self.result
 
-    def visualize(self, n_feature=2):
+    def visualize(self):
         plt.style.use('seaborn')
 
-        if n_feature == 2:
-            self.data = self.data.squeeze()
-            self.reference_pos = self.reference_pos.squeeze()
-            self.reference_neg = self.reference_neg.squeeze()
+        self.data = self.data.squeeze()
+        self.reference_pos = self.reference_pos.squeeze()
+        self.reference_neg = self.reference_neg.squeeze()
 
-            cmap = cm.get_cmap('rainbow', lut=2)
+        cmap = cm.get_cmap('rainbow', lut=2)
+
+        n_feature = self.weight.shape[0]
+
+        if n_feature == 2:
 
             fig, ax = plt.subplots(figsize=(10, 5))
 
@@ -89,24 +92,55 @@ class classification_model():
             ax.scatter([], [], color='k', marker='*', label='data')
             ax.scatter([], [], color='k', marker='o', label='reference')
 
-        elif n_feature == 3:
-            pass
-
-        ax.legend(loc='upper left',
+            ax.legend(loc='upper left',
                   bbox_to_anchor=(1, 1),
                   ncol=2)
+
+        elif n_feature == 3:
+            fig = plt.figure(figsize=(10, 10))
+            ax = fig.add_subplot(projection='3d')
+            ax.tick_params(labelsize=20)
+            fig.subplots_adjust(bottom=0, top=1,
+                                left=0, right=1)
+
+            ax.set_xlabel("Riboflavin", fontsize=20, labelpad=20)
+            ax.set_ylabel("Dust", fontsize=20, labelpad=20)
+            ax.set_zlabel("damaged", fontsize=20, labelpad=20)
+
+            ax.scatter(self.reference_pos[..., 0], self.reference_pos[..., 1], self.reference_pos[..., 2], 
+                       color=cmap(0), 
+                       alpha=0.3,
+                       s=50)
+            ax.scatter(self.reference_neg[..., 0], self.reference_neg[..., 1], self.reference_neg[..., 2], 
+                       color=cmap(1), 
+                       alpha=0.3,
+                       s=50)
+            for data_idx, data in enumerate(self.data):
+                ax.scatter(data[0], data[1], data[2], 
+                           color=cmap(self.result[data_idx]), 
+                           marker='*',
+                           s=50)
+
+            # for legend
+            ax.scatter([], [], [], color=cmap(0), label='positive')
+            ax.scatter([], [], [], color=cmap(1), label='negative')
+            ax.scatter([], [], [], color='k', marker='*', label='data')
+            ax.scatter([], [], [], color='k', marker='o', label='reference')
+
+            plt.legend(loc="upper left")
+        
         fig.tight_layout()
         plt.show()
 
 if __name__ == "__main__":
-    reference_pos = np.random.randint(low=0, high=10, size=(20, 2))
-    reference_neg = np.random.randint(low=20, high=30, size=(20, 2))
-    data = np.random.randint(low=0, high=30, size=(100, 2))
+    reference_pos = np.random.randint(low=0, high=10, size=(20, 3))
+    reference_neg = np.random.randint(low=20, high=30, size=(20, 3))
+    data = np.random.randint(low=0, high=30, size=(50, 3))
 
     model = classification_model()
     model.weighted_KNN(K=5, 
                        data=data, 
                        reference=[reference_pos, reference_neg], 
-                       weight=np.array([1, 3]))
+                       weight=np.array([1, 3, 2]))
     model.visualize()
     print(model.get_dust_info())
