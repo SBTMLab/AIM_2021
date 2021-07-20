@@ -6,7 +6,7 @@
 ## requirements
    to install packages, go to [AIM_2021/RaspberryPi/Face-Mask-Detection-master](https://github.com/SBTMLab/AIM_2021/tree/main/RaspberryPi/Face-Mask-Detection-master) directory and install below
 
-    pip install -r requiremetns.txt
+    pip3 install -r requirements.txt
     
 
   
