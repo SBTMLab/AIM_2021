@@ -75,7 +75,6 @@ class classification_model():
         n_feature = self.weight.shape[0]
 
         if n_feature == 2:
-
             fig, ax = plt.subplots(figsize=(10, 5))
 
             ax.scatter(self.reference_pos[..., 0], self.reference_pos[..., 1], color=cmap(0), alpha=0.3)
@@ -93,13 +92,12 @@ class classification_model():
             ax.scatter([], [], color='k', marker='o', label='reference')
 
             ax.legend(loc='upper left',
-                  bbox_to_anchor=(1, 1),
-                  ncol=2)
+                      bbox_to_anchor=(1, 1),
+                      ncol=2)
 
         elif n_feature == 3:
             fig = plt.figure(figsize=(10, 10))
             ax = fig.add_subplot(projection='3d')
-            ax.tick_params(labelsize=20)
             fig.subplots_adjust(bottom=0, top=1,
                                 left=0, right=1)
 
@@ -133,14 +131,14 @@ class classification_model():
         plt.show()
 
 if __name__ == "__main__":
-    reference_pos = np.random.randint(low=0, high=10, size=(20, 3))
-    reference_neg = np.random.randint(low=20, high=30, size=(20, 3))
-    data = np.random.randint(low=0, high=30, size=(50, 3))
+    reference_pos = np.random.randint(low=0, high=10, size=(20, 2))
+    reference_neg = np.random.randint(low=20, high=30, size=(30, 2))
+    data = np.random.randint(low=0, high=30, size=(60, 2))
 
     model = classification_model()
     model.weighted_KNN(K=5, 
                        data=data, 
                        reference=[reference_pos, reference_neg], 
-                       weight=np.array([1, 3, 2]))
+                       weight=np.array([1, 3]))
     model.visualize()
     print(model.get_dust_info())
