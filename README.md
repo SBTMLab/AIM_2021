@@ -1,3 +1,6 @@
+## Project Description
+TODO
+
 ## 주요 일정
   5월 13일: AIM 분야 동아리 선정평가 통과
   
