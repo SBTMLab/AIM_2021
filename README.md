@@ -1,7 +1,7 @@
 ## Project Description
 TODO
 
-## 주요 일정
+## Schedules
   5월 13일: AIM 분야 동아리 선정평가 통과
   
   5월 18일: OT
