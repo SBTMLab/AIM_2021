@@ -67,8 +67,16 @@ class classification_model():
         plt.style.use('seaborn')
 
         self.data = self.data.squeeze()
+        if self.data.ndim == 1:
+            self.data = np.expand_dims(self.data, axis=0)
+
         self.reference_pos = self.reference_pos.squeeze()
+        if self.reference_pos.ndim == 1:
+            self.reference_pos = np.expand_dims(self.reference_pos, axis=0)
+
         self.reference_neg = self.reference_neg.squeeze()
+        if self.reference_neg.ndim == 1:
+            self.reference_neg = np.expand_dims(self.reference_neg, axis=0)
 
         cmap = cm.get_cmap('rainbow', lut=2)
 
@@ -133,7 +141,7 @@ class classification_model():
 if __name__ == "__main__":
     reference_pos = np.random.randint(low=0, high=10, size=(20, 2))
     reference_neg = np.random.randint(low=20, high=30, size=(30, 2))
-    data = np.random.randint(low=0, high=30, size=(60, 2))
+    data = np.random.randint(low=0, high=30, size=(2, ))
 
     model = classification_model()
     model.weighted_KNN(K=5, 

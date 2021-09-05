@@ -14,8 +14,8 @@ import cv2
 import os
 
 # import packages for warning audio
-import pyaudio
-import wave
+#import pyaudio
+#import wave
 
 CHUNK = 512
 AUDIO_PATH = 'audio/mask_warning.wav'
@@ -143,7 +143,7 @@ while True:
 		cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 
 		########## add warning code ##########
-		if label == "No Mask":
+		'''if label == "No Mask":
 			wf = wave.open(AUDIO_PATH, 'rb')
 
 			p = pyaudio.PyAudio()
@@ -162,7 +162,7 @@ while True:
 			stream.stop_stream()
 			stream.close()
 			wf.close()
-			p.terminate()
+			p.terminate()'''
 
 	# show the output frame
 	cv2.imshow("Frame", frame)
