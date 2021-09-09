@@ -15,9 +15,11 @@ class classification_model():
         self.result = None
         self.fine_dust = None
         self.ultra_fine_dust = None
+        self.fine_dust_text = None
+        self.ultra_fine_dust_text = None
 
     def get_dust_info(self):
-        html = requests.get('https://search.naver.com/search.naver?query=날씨')
+        html = requests.get('https://search.naver.com/search.naver?query=서대문구 날씨')
         soup = bs(html.text,'html.parser')
 
         dust_data = soup.find('div',{'class':'detail_box'}).findAll('dd')
@@ -25,7 +27,10 @@ class classification_model():
         self.fine_dust = dust_data[0].find('span',{'class':'num'}).text.split('㎍')[0]
         self.ultra_fine_dust = dust_data[1].find('span',{'class':'num'}).text.split('㎍')[0]
 
-        return int(self.fine_dust), int(self.ultra_fine_dust)
+        self.fine_dust_text = dust_data[0].text.split('㎥')[-1]
+        self.ultra_fine_dust_text = dust_data[1].text.split('㎥')[-1]
+
+        return int(self.fine_dust), int(self.ultra_fine_dust), self.fine_dust_text, self.ultra_fine_dust_text
 
     def read_spectroscope(self, file_directory):
         pass
