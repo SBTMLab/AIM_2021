@@ -13,13 +13,13 @@ import time
 import cv2
 import os
 
-# import packages for warning audio
-#import pyaudio
-#import wave
+import winsound
 
-CHUNK = 512
-AUDIO_PATH = 'audio/mask_warning.wav'
-PATH_TO_APPEND = 'Face-Mask-Detection-master/'
+PATH_TO_APPEND = ''
+
+label = "Mask"
+no_mask = False
+no_mask_count = 0
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
 	# grab the dimensions of the frame and then construct a blob
@@ -134,35 +134,28 @@ while True:
 		color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 			
 		# include the probability in the label
-		label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
+		label_percent = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
 
 		# display the label and bounding box rectangle on the output
 		# frame
-		cv2.putText(frame, label, (startX, startY - 10),
+		cv2.putText(frame, label_percent, (startX, startY - 10),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
 		cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 
 		########## add warning code ##########
-		'''if label == "No Mask":
-			wf = wave.open(AUDIO_PATH, 'rb')
-
-			p = pyaudio.PyAudio()
-
-			stream = p.open(format =p.get_format_from_width(wf.getsampwidth()),
-                			channels =wf.getnchannels(),
-                			rate =wf.getframerate(),
-                			output =True)
-
-			data = wf.readframes(CHUNK)
-
-			while data:
-				stream.write(data)
-				data = wf.readframes(CHUNK)
-				
-			stream.stop_stream()
-			stream.close()
-			wf.close()
-			p.terminate()'''
+		if label == "No Mask" and no_mask == False:
+			no_mask = True
+		elif label == "No Mask" and no_mask == True and no_mask_count < 5:
+			no_mask_count += 1
+		elif label == "No Mask" and no_mask == True and no_mask_count == 5:
+			winsound.PlaySound("hey", winsound.SND_FILENAME)
+			text = np.zeros((100, 300), np.uint8)
+			cv2.putText(text, 'PUT ON YOUR MASK!!', (50, 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (255, 0, 0), 1, cv2.LINE_AA)
+			cv2.imshow("make_txt", text)
+			cv2.waitKey()
+			cv2.destroyWindow("make_txt")
+			no_mask_count = 0
+			no_mask == False
 
 	# show the output frame
 	cv2.imshow("Frame", frame)

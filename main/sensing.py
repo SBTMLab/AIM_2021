@@ -5,7 +5,7 @@ import numpy as np
 
 # 형광분석법, 마스크먼지 측정
 class sensing():
-    def __init__(self, ultraviolet_pin:int, visible_pin:int, light_channel=1):
+    def __init__(self, ultraviolet_pin:int, visible_pin:int, light_channel=0):
         self.ultraviolet_pin = ultraviolet_pin
         self.visible_pin = visible_pin
         self.light_channel = light_channel
@@ -55,3 +55,8 @@ class sensing():
     def dust_clear(self):
         self.dust_before = 0
         self.dust_after = 0
+
+if __name__ == '__main__':
+    rasp = sensing(ultraviolet_pin=18, visible_pin=17, light_channel=0)
+    rasp.turn_LED_on(sec=100, brightness=70, visible=True)
+    # print(rasp.light_sensor(accumulate_time=20))

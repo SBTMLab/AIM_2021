@@ -3,6 +3,7 @@ import requests
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import pandas as pd
 
 # dust info, KNN, visualize
 class classification_model():
@@ -19,11 +20,15 @@ class classification_model():
         self.ultra_fine_dust_text = None
 
     def get_dust_info(self):
-        html = requests.get('https://search.naver.com/search.naver?query=서대문구 날씨')
+        html = requests.get('https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&query=서울특별시 서대문구 미세먼지')
         soup = bs(html.text,'html.parser')
+        dust_data = str(soup.find('div',{'class':'detail_info lv2'}).findAll('dd')[0].contents[0])
 
-        dust_data = soup.find('div',{'class':'detail_box'}).findAll('dd')
-
+        ultra_html = requests.get('https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&query=서울특별시 서대문구 초미세먼지')
+        ultra_soup = bs(ultra_html.text,'html.parser')
+        ultra_dust_data = str(ultra_soup.find('div',{'class':'detail_info lv2'}).findAll('dd')[0].contents[0])
+        
+        '''
         self.fine_dust = dust_data[0].find('span',{'class':'num'}).text.split('㎍')[0]
         self.ultra_fine_dust = dust_data[1].find('span',{'class':'num'}).text.split('㎍')[0]
 
@@ -31,9 +36,18 @@ class classification_model():
         self.ultra_fine_dust_text = dust_data[1].text.split('㎥')[-1]
 
         return int(self.fine_dust), int(self.ultra_fine_dust), self.fine_dust_text, self.ultra_fine_dust_text
+        '''
 
-    def read_spectroscope(self, file_directory):
-        pass
+        return dust_data, ultra_dust_data
+
+    def read_spectroscope(self, file_directory, lower_bound, upper_bound):
+        read_data = pd.read_excel(file_directory, header=None, skiprows=7)
+        # print(read_data)
+        light_data = read_data[read_data[0] >= lower_bound]
+        light_data = light_data[light_data[0] <= upper_bound]
+        light_data_list = light_data[1].values.tolist()
+        light_array = np.array(light_data_list)
+        return light_array.mean()
 
     def weighted_KNN(self, K: int, data: np.array, reference: list, weight: np.array):
         self.data = data # shape: (n_data, n_feature)
@@ -149,9 +163,10 @@ if __name__ == "__main__":
     data = np.random.randint(low=0, high=30, size=(2, ))
 
     model = classification_model()
-    model.weighted_KNN(K=5, 
+    '''model.weighted_KNN(K=5, 
                        data=data, 
                        reference=[reference_pos, reference_neg], 
                        weight=np.array([1, 3]))
-    model.visualize()
+    model.visualize()'''
     print(model.get_dust_info())
+    print(model.read_spectroscope(file_directory='20211024.xlsx', lower_bound=510, upper_bound=540))
