@@ -6,6 +6,8 @@ TODO
   
   5월 18일: OT
   
+  11월 26일: 경진대회
+  
 ## Requirements
    to install packages, go to [AIM_2021/RaspberryPi/Face-Mask-Detection-master](https://github.com/SBTMLab/AIM_2021/tree/main/RaspberryPi/Face-Mask-Detection-master) directory and install below
 
