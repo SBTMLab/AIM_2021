@@ -1,5 +1,5 @@
 ## Project Description
-TODO
+We implemented a function that tells us if additional use is available for a mask that has been used during the day using the KNN algorithm. Additional features are also implemented.
 
 ## Schedules
   5월 13일: AIM 분야 동아리 선정평가 통과
